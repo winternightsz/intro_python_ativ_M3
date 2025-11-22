@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gen-n-ver"  
+version = "0.0.1"
+description = "Uma biblioteca simples para geração de dados falsos: nome, email, username e senha, e verificação de dados básicos."
+authors = [{name = "nomes"}]
+readme = "README.md"
+requires-python = ">=3.8"

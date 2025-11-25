@@ -12,9 +12,15 @@ def validar_email(email: str) -> bool:
     Exemplo de chamada:
         validar_email("teste@gmail.com")
 
+    Erros:
+        TypeError se 'email' não for string.
+        
     Retorno:
         True ou False
     """
+    if not isinstance(email, str):
+        raise TypeError("O parâmetro 'email' deve ser uma string.")
+
     if "@" not in email or email.count("@") != 1:
         return False
 
@@ -43,7 +49,11 @@ def validar_usuario(
         - Tamanho mínimo e máximo configurável
         - Apenas letras, números, '_' e '.'
         - Não pode ser só números
-
+    Erros:
+        TypeError se 'usuario' não for string.
+        TypeError se tamanhos não forem inteiros.
+        ValueError se tamanhos forem inválidos.
+        
     Exemplo:
         validar_usuario("lara123")
         validar_usuario("joao.silva")
@@ -51,6 +61,18 @@ def validar_usuario(
     Retorno:
         True ou False
     """
+    if not isinstance(usuario, str):
+        raise TypeError("O parâmetro 'usuario' deve ser uma string.")
+
+    if not isinstance(tamanho_minimo, int) or not isinstance(tamanho_maximo, int):
+        raise TypeError("tamanho_minimo e tamanho_maximo devem ser inteiros.")
+
+    if tamanho_minimo < 1:
+        raise ValueError("tamanho_minimo deve ser pelo menos 1.")
+    if tamanho_maximo < tamanho_minimo:
+        raise ValueError("tamanho_maximo deve ser maior ou igual a tamanho_minimo.")
+
+
     if not (tamanho_minimo <= len(usuario) <= tamanho_maximo):
         return False
 
@@ -84,6 +106,11 @@ def validar_senha(
         exigir_digitos: exige pelo menos 1 número
         exigir_especiais: exige pelo menos 1 símbolo especial
         caracteres_especiais: conjunto de símbolos válidos
+    Erros:
+        TypeError se 'senha' não for string.
+        TypeError se caracteres_especiais não for string.
+        TypeError se tamanho_minimo não for inteiro.
+        ValueError se tamanho_minimo <= 0.
 
     Exemplo:
         validar_senha("Abc123!")
@@ -92,6 +119,19 @@ def validar_senha(
     Retorno:
         True ou False
     """
+    if not isinstance(senha, str):
+        raise TypeError("O parâmetro 'senha' deve ser uma string.")
+
+    if not isinstance(tamanho_minimo, int):
+        raise TypeError("tamanho_minimo deve ser um inteiro.")
+        
+    if tamanho_minimo <= 0:
+        raise ValueError("tamanho_minimo deve ser maior que zero.")
+        
+    #Tratamento de tipo dos caracteres especiais
+    if not isinstance(caracteres_especiais, str):
+        raise TypeError("caracteres_especiais deve ser uma string.")
+
     if len(senha) < tamanho_minimo:
         return False
 

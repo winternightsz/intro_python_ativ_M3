@@ -2,8 +2,8 @@ import random
 import string
 
 LISTA_PRIMEIROS_NOMES = [
-    "Lara", "João", "Bárbara", "Beatriz", "Milo", "Pedro",
-    "Lucas", "Rafael", "Paulo", "Fernanda",
+    "Lara", "Alice", "Arthur", "João", "Bárbara", "Beatriz", "Pedro",
+    "Lucas", "Rafael", "Paulo", "Fernanda", "Thiago", "Camila",
 ]
 
 LISTA_SOBRENOMES = [
@@ -99,18 +99,32 @@ def gerar_usuario(
     Retorno:
         'larasouza12'
     """
+    #Tratamento de erros de parâmetros
+    if not isinstance(tamanho_minimo, int) or not isinstance(tamanho_maximo, int):
+        raise TypeError("tamanho_minimo e tamanho_maximo devem ser inteiros.")
+    if tamanho_minimo < 1:
+        raise ValueError("tamanho_minimo deve ser pelo menos 1.")
+    if tamanho_maximo < tamanho_minimo:
+        raise ValueError("tamanho_maximo deve ser maior ou igual a tamanho_minimo.")
+
     if nome is None:
         nome = gerar_nome_completo()
+    else:
+        if not isinstance(nome, str):
+            raise TypeError("O parâmetro 'nome' deve ser uma string ou None.")
 
     base = _normalizar_usuario(nome)
     if not base:
         base = "usuario"
 
+    #Completa com números se for curto
     while len(base) < tamanho_minimo:
         base += str(random.randint(0, 9))
 
+    #Corta se for grande demais
     base = base[:tamanho_maximo]
 
+    #Vai ter 50% de chance de colocar números no final
     if random.random() < 0.5:
         sufixo = str(random.randint(0, 9999))
         resultado = base + sufixo
@@ -141,13 +155,23 @@ def gerar_email(nome: str | None = None, dominio: str | None = None) -> str:
     """
     if nome is None:
         nome = gerar_nome_completo()
+    else:
+        if not isinstance(nome, str):
+            raise TypeError("O parâmetro 'nome' deve ser uma string ou None.")
 
+    #Pequena variação com número no final
     usuario = _normalizar_usuario(nome)
     if random.random() < 0.7:
         usuario += str(random.randint(1, 9999))
 
     if dominio is None:
         dominio = random.choice(LISTA_DOMINIOS_EMAIL)
+    else:
+        # Validação simples do domínio informado
+        if "@" in dominio:
+            raise ValueError("O domínio não deve conter '@'. Use apenas a parte após '@'.")
+        if "." not in dominio:
+            raise ValueError("O domínio deve conter pelo menos um ponto (ex.: 'exemplo.com').")
 
     return f"{usuario}@{dominio}"
 
@@ -184,6 +208,29 @@ def gerar_senha(
     Retorno:
         Exemplo: 'Ab7$k2LmQ9!3'
     """
+     # Tratamento de tipos e valores
+    if not isinstance(tamanho, int):
+        raise TypeError("O parâmetro 'tamanho' deve ser um inteiro.")
+    if tamanho <= 0:
+        raise ValueError("O tamanho da senha deve ser maior que zero.")
+
+        # validar mínimos
+    for nome_param, valor in [
+        ("minimo_minusculas", minimo_minusculas),
+        ("minimo_maiusculas", minimo_maiusculas),
+        ("minimo_digitos", minimo_digitos),
+        ("minimo_especiais", minimo_especiais),
+    ]:
+        if valor is not None and (not isinstance(valor, int) or valor < 0):
+            raise ValueError(f"{nome_param} deve ser um inteiro >= 0 ou None.")
+
+    # Pelo menos um tipo de caractere precisa estar habilitado
+    if not (usar_minusculas or usar_maiusculas or usar_digitos or usar_especiais):
+        raise ValueError(
+            "Pelo menos um tipo de caractere deve estar habilitado "
+            "(minusculas, maiusculas, digitos ou especiais)."
+        )
+
     minusculas = string.ascii_lowercase
     maiusculas = string.ascii_uppercase
     digitos = string.digits
